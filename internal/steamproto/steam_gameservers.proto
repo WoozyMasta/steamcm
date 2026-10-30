@@ -1,0 +1,99 @@
+syntax = "proto2";
+
+package steam;
+
+import "steam_base.proto";
+
+option go_package = "github.com/woozymasta/steamcm/internal/steamproto;steamproto";
+
+// ClientGMSServerQuery requests server endpoints from the CM GMS service.
+message CMsgClientGMSServerQuery {
+	optional uint32 app_id = 1;
+	optional uint32 geo_location_ip = 2;
+	optional uint32 region_code = 3;
+	optional string filter_text = 4;
+	optional uint32 max_servers = 5;
+	optional string sdr_ping_location = 6;
+}
+
+message CMsgGMSClientServerQueryResponse {
+	message Server {
+		optional uint32 deprecated_server_ip = 1;
+		optional uint32 query_port = 2;
+		optional uint32 auth_players = 3;
+		optional CMsgIPAddress server_ip = 4;
+		optional fixed64 steam_id = 6;
+		optional uint32 revision = 7;
+		optional uint32 players = 8;
+		optional uint32 game_port = 9;
+		optional fixed32 sdr_popid = 10;
+		optional uint32 flags = 11;
+		optional uint32 app_id = 12;
+		optional uint32 max_players = 13;
+		optional uint32 bots = 14;
+		optional uint32 spectator_port = 15;
+		optional string gamedir_str = 16;
+		optional uint32 gamedir_strindex = 17;
+		optional string map_str = 18;
+		optional uint32 map_strindex = 19;
+		optional string name_str = 20;
+		optional uint32 name_strindex = 21;
+		optional string game_description_str = 22;
+		optional uint32 game_description_strindex = 23;
+		optional string version_str = 24;
+		optional uint32 version_strindex = 25;
+		optional string gametype_str = 26;
+		optional uint32 gametype_strindex = 27;
+		optional string spectator_name_str = 30;
+		optional uint32 spectator_name_strindex = 31;
+		optional string sdr_ping_location = 32;
+		repeated fixed64 friends = 33;
+		optional uint32 friends_count = 34;
+		optional uint32 friends_count_connected = 35;
+		optional uint32 ping_estimate = 36;
+	}
+
+	repeated Server servers = 1;
+	optional string error = 2;
+	optional Server default_server_data = 3;
+	repeated string server_strings = 4;
+}
+
+message CGameServers_MasterServerQuery_Request {
+	optional uint32 appid = 1;
+	optional CMsgClientGMSServerQuery query_data = 2;
+}
+
+message CGameServers_MasterServerQuery_Response {
+	optional CMsgGMSClientServerQueryResponse query_response = 1;
+}
+
+message CGameServers_GetServerList_Request {
+	optional string filter = 1;
+	optional uint32 limit = 2 [default = 100];
+}
+
+message CGameServers_GetServerList_Response {
+	message Server {
+		optional string addr = 1;
+		optional uint32 gameport = 2;
+		optional uint32 specport = 3;
+		optional fixed64 steamid = 4;
+		optional string name = 5;
+		optional uint32 appid = 6;
+		optional string gamedir = 7;
+		optional string version = 8;
+		optional string product = 9;
+		optional int32 region = 10;
+		optional int32 players = 11;
+		optional int32 max_players = 12;
+		optional int32 bots = 13;
+		optional string map = 14;
+		optional bool secure = 15;
+		optional bool dedicated = 16;
+		optional string os = 17;
+		optional string gametype = 18;
+	}
+
+	repeated Server servers = 1;
+}

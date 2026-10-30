@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package steam;
+
+option go_package = "github.com/woozymasta/steamcm/internal/steamproto;steamproto";
+
+// CMsgIPAddress is shared by CM login and legacy GMS query messages.
+message CMsgIPAddress {
+	oneof ip {
+		fixed32 v4 = 1;
+		bytes v6 = 2;
+	}
+}

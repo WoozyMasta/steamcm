@@ -1,0 +1,65 @@
+syntax = "proto2";
+
+package steam;
+
+import "steam_base.proto";
+
+option go_package = "github.com/woozymasta/steamcm/internal/steamproto;steamproto";
+
+// This is the minimal versioned subset required by the CM discovery runtime.
+// Field numbers and wire types follow SteamTracking/Protobufs.
+
+message CMsgProtoBufHeader {
+	optional fixed64 steamid = 1;
+	optional int32 client_sessionid = 2;
+	optional fixed64 jobid_source = 10 [default = 18446744073709551615];
+	optional fixed64 jobid_target = 11 [default = 18446744073709551615];
+	optional string target_job_name = 12;
+	optional int32 eresult = 13 [default = 2];
+	optional string error_message = 14;
+	optional uint32 realm = 32 [default = 0];
+}
+
+message CMsgMulti {
+	optional uint32 size_unzipped = 1;
+	optional bytes message_body = 2;
+}
+
+message CMsgClientLogon {
+	optional uint32 protocol_version = 1;
+	optional uint32 deprecated_obfuscated_private_ip = 2;
+	optional bool should_remember_password = 8 [default = false];
+	optional uint32 cell_id = 3;
+	optional string client_language = 6;
+	optional uint32 client_os_type = 7;
+	optional uint32 qos_level = 21;
+	optional fixed64 client_supplied_steam_id = 22;
+	optional CMsgIPAddress obfuscated_private_ip = 11;
+	optional uint32 chat_mode = 33;
+	optional uint64 client_instance_id = 100;
+	optional string anon_user_target_account_name = 80;
+	optional string account_name = 50;
+	optional string machine_name = 96;
+	optional bool supports_rate_limit_response = 102;
+	optional string access_token = 108;
+}
+
+message CMsgClientLogonResponse {
+	optional int32 eresult = 1 [default = 2];
+	optional int32 heartbeat_seconds = 3;
+	optional uint32 cell_id = 7;
+	optional fixed64 client_supplied_steamid = 20;
+	optional uint64 client_instance_id = 27;
+}
+
+message CMsgClientHeartBeat {
+	optional bool send_reply = 1;
+}
+
+message CMsgClientHello {
+	optional uint32 protocol_version = 1;
+}
+
+message CMsgClientLoggedOff {
+	optional int32 eresult = 1 [default = 2];
+}

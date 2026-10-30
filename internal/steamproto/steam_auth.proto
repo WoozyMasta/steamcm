@@ -1,0 +1,119 @@
+syntax = "proto2";
+
+package steam;
+
+option go_package = "github.com/woozymasta/steamcm/internal/steamproto;steamproto";
+
+enum EAuthTokenPlatformType {
+	EAuthTokenPlatformTypeUnknown = 0;
+	EAuthTokenPlatformTypeSteamClient = 1;
+	EAuthTokenPlatformTypeWebBrowser = 2;
+	EAuthTokenPlatformTypeMobileApp = 3;
+}
+
+enum EAuthSessionGuardType {
+	EAuthSessionGuardTypeUnknown = 0;
+	EAuthSessionGuardTypeNone = 1;
+	EAuthSessionGuardTypeEmailCode = 2;
+	EAuthSessionGuardTypeDeviceCode = 3;
+	EAuthSessionGuardTypeDeviceConfirmation = 4;
+	EAuthSessionGuardTypeEmailConfirmation = 5;
+	EAuthSessionGuardTypeMachineToken = 6;
+	EAuthSessionGuardTypeLegacyMachineAuth = 7;
+}
+
+enum ESessionPersistence {
+	ESessionPersistenceInvalid = -1;
+	ESessionPersistenceEphemeral = 0;
+	ESessionPersistencePersistent = 1;
+}
+
+message CAuthentication_GetPasswordRSAPublicKey_Request {
+	optional string account_name = 1;
+}
+
+message CAuthentication_GetPasswordRSAPublicKey_Response {
+	optional string publickey_mod = 1;
+	optional string publickey_exp = 2;
+	optional uint64 timestamp = 3;
+}
+
+message CAuthentication_DeviceDetails {
+	optional string device_friendly_name = 1;
+	optional EAuthTokenPlatformType platform_type = 2 [default = EAuthTokenPlatformTypeUnknown];
+	optional int32 os_type = 3;
+}
+
+message CAuthentication_BeginAuthSessionViaQR_Request {
+	optional string device_friendly_name = 1;
+	optional EAuthTokenPlatformType platform_type = 2 [default = EAuthTokenPlatformTypeUnknown];
+	optional CAuthentication_DeviceDetails device_details = 3;
+	optional string website_id = 4;
+}
+
+message CAuthentication_BeginAuthSessionViaQR_Response {
+	optional uint64 client_id = 1;
+	optional string challenge_url = 2;
+	optional bytes request_id = 3;
+	optional float interval = 4;
+	repeated CAuthentication_AllowedConfirmation allowed_confirmations = 5;
+	optional int32 version = 6;
+}
+
+message CAuthentication_AllowedConfirmation {
+	optional EAuthSessionGuardType confirmation_type = 1 [default = EAuthSessionGuardTypeUnknown];
+	optional string associated_message = 2;
+}
+
+message CAuthentication_BeginAuthSessionViaCredentials_Request {
+	optional string device_friendly_name = 1;
+	optional string account_name = 2;
+	optional string encrypted_password = 3;
+	optional uint64 encryption_timestamp = 4;
+	optional bool remember_login = 5;
+	optional EAuthTokenPlatformType platform_type = 6 [default = EAuthTokenPlatformTypeUnknown];
+	optional ESessionPersistence persistence = 7 [default = ESessionPersistencePersistent];
+	optional string website_id = 8;
+	optional CAuthentication_DeviceDetails device_details = 9;
+	optional string guard_data = 10;
+	optional uint32 language = 11;
+	optional int32 qos_level = 12 [default = 2];
+}
+
+message CAuthentication_BeginAuthSessionViaCredentials_Response {
+	optional uint64 client_id = 1;
+	optional bytes request_id = 2;
+	optional float interval = 3;
+	repeated CAuthentication_AllowedConfirmation allowed_confirmations = 4;
+	optional uint64 steamid = 5;
+	optional string weak_token = 6;
+	optional string agreement_session_url = 7;
+	optional string extended_error_message = 8;
+}
+
+message CAuthentication_UpdateAuthSessionWithSteamGuardCode_Request {
+	optional uint64 client_id = 1;
+	optional fixed64 steamid = 2;
+	optional string code = 3;
+	optional EAuthSessionGuardType code_type = 4 [default = EAuthSessionGuardTypeUnknown];
+}
+
+message CAuthentication_UpdateAuthSessionWithSteamGuardCode_Response {
+	optional string agreement_session_url = 7;
+}
+
+message CAuthentication_PollAuthSessionStatus_Request {
+	optional uint64 client_id = 1;
+	optional bytes request_id = 2;
+}
+
+message CAuthentication_PollAuthSessionStatus_Response {
+	optional uint64 new_client_id = 1;
+	optional string new_challenge_url = 2;
+	optional string refresh_token = 3;
+	optional string access_token = 4;
+	optional bool had_remote_interaction = 5;
+	optional string account_name = 6;
+	optional string new_guard_data = 7;
+	optional string agreement_session_url = 8;
+}
